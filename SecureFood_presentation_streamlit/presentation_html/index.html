@@ -76,7 +76,8 @@ html, body {
   background: rgba(10,15,30,0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: flex-start;
+  gap: 14px;
   padding: 0 20px;
   z-index: 1000;
   border-top: 1px solid rgba(255,255,255,0.06);
@@ -97,6 +98,7 @@ html, body {
 
 #nav-left {
   display: flex; align-items: center; gap: 8px;
+  flex: 0 0 auto;
 }
 
 #nav-home,
@@ -104,6 +106,10 @@ html, body {
 
 #nav-centre {
   display: flex; align-items: center; gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: center;
+  padding-right: 86px;
 }
 
 #slide-counter {
@@ -131,7 +137,8 @@ html, body {
 }
 .dot:hover:not(.active) { background: rgba(0,163,163,0.5); }
 
-#nav-right { display: flex; gap: 8px; }
+#nav-back,
+#nav-next { min-width: 82px; }
 
 /* =====================================================================
    ANIMATION SYSTEM
@@ -2873,6 +2880,7 @@ html, body {
   #nav-bar {
     height: 54px;
     padding: 0 12px;
+    gap: 10px;
   }
   #dot-indicators {
     max-width: 42vw;
@@ -2966,22 +2974,36 @@ html, body {
 
 @media (max-width: 680px) {
   #nav-bar {
-    height: 50px;
-    padding: 0 8px;
+    height: auto;
+    min-height: 78px;
+    padding: 6px 8px 8px;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 6px 8px;
   }
   #nav-home {
     padding: 5px 9px;
   }
   #nav-left {
     gap: 5px;
-  }
-  #nav-right {
-    gap: 5px;
+    width: 100%;
+    justify-content: flex-start;
   }
   #nav-bar button {
     padding: 5px 8px;
     font-size: 11px;
     border-radius: 7px;
+  }
+  #nav-back,
+  #nav-next {
+    min-width: 58px;
+  }
+  #nav-centre {
+    width: 100%;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    padding-right: 0;
+    gap: 8px;
   }
   #slide-counter {
     min-width: 34px;
@@ -2989,12 +3011,16 @@ html, body {
   }
   #dot-indicators {
     gap: 5px;
-    max-width: 34vw;
+    max-width: calc(100vw - 64px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 2px;
   }
+  #dot-indicators::-webkit-scrollbar { display: none; }
   .dot {
-    width: 6px;
-    height: 6px;
-    min-width: 6px;
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
   }
 
   .slide-title {
@@ -3026,7 +3052,7 @@ html, body {
     padding-left: 5vw;
     padding-right: 5vw;
     padding-top: 34px;
-    padding-bottom: 72px;
+    padding-bottom: 112px;
     width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
@@ -4501,6 +4527,8 @@ html, body {
 <div id="nav-bar">
   <div id="nav-left">
     <button id="nav-home" onclick="reloadPresentation()" title="Refresh presentation" aria-label="Refresh presentation">⌂</button>
+    <button id="nav-back" onclick="navigate(-1)" title="Previous slide" aria-label="Previous slide">← Back</button>
+    <button id="nav-next" onclick="navigate(1)" title="Next slide" aria-label="Next slide">Next →</button>
     <button id="nav-fullscreen" onclick="toggleFullscreen()" title="Enter full screen" aria-label="Enter full screen">⛶</button>
   </div>
 
@@ -4509,10 +4537,6 @@ html, body {
     <div id="dot-indicators"></div>
   </div>
 
-  <div id="nav-right">
-    <button onclick="navigate(-1)">← Back</button>
-    <button onclick="navigate(1)">Next →</button>
-  </div>
 </div>
 
 <!-- Chart.js from CDN -->
