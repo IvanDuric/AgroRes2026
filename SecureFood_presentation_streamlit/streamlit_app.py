@@ -43,12 +43,29 @@ html = inline_local_assets(HTML_PATH.read_text(encoding="utf-8"))
 st.markdown(
     """
     <style>
+      html, body, [data-testid="stAppViewContainer"], .stApp {
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
       .block-container { padding: 0 !important; max-width: none !important; }
-      header, footer { visibility: hidden; height: 0; }
-      iframe { display: block; }
+      header, footer, [data-testid="stToolbar"] { visibility: hidden; height: 0; }
+      .stElementContainer, .element-container {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      iframe[title="st.iframe"] {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        border: 0 !important;
+        display: block !important;
+      }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-components.html(html, height=920, scrolling=False)
+components.html(html, height=1, scrolling=False)

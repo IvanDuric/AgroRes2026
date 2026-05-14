@@ -4585,8 +4585,12 @@ function goToSlide(n) {
   if (!Number.isInteger(n) || n < 1 || n > TOTAL_SLIDES || n === currentSlide) return;
 
   currentSlide = n;
-  if (window.location.hash !== '#' + n) {
-    window.history.replaceState(null, '', '#' + n);
+  try {
+    if (window.location.protocol !== 'about:' && window.location.hash !== '#' + n) {
+      window.history.replaceState(null, '', '#' + n);
+    }
+  } catch (err) {
+    // Streamlit renders components as about:srcdoc; slide navigation should not depend on URL hashes there.
   }
   positionSlides(n);
   updateNav(n);
