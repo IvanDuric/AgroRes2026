@@ -36,6 +36,10 @@ html, body {
   background: var(--navy-dark);
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* =====================================================================
    SLIDE SYSTEM
    ===================================================================== */
@@ -1696,16 +1700,19 @@ html, body {
 
 .s10-content {
   height: 100%;
-  display: flex; flex-direction: column; align-items: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 44px 5vw 80px;
 }
 
-.s10-content .slide-title { text-align: center; }
+.s10-content .slide-title {
+  text-align: center;
+  margin-bottom: clamp(34px, 4vh, 54px);
+}
 
 .s10-pipeline {
   width: 100%; max-width: 960px;
   display: flex; flex-direction: column; align-items: center;
-  gap: 0; flex: 1; justify-content: center;
+  gap: 0; flex: 0 1 auto; justify-content: center;
 }
 
 .pipe-box {
@@ -3173,7 +3180,7 @@ html, body {
     line-height: 1.12;
     margin-bottom: 16px;
     max-width: 100%;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
   }
 
   .s1-content,
@@ -3201,6 +3208,78 @@ html, body {
     width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
+  }
+
+  .slide * {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .slide img,
+  .slide video,
+  .slide svg,
+  .slide canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .s5x-header,
+  .s5x-body,
+  .s10-pipeline,
+  .s13-protocol {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .s5x-header {
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .s5x-logos {
+    flex-wrap: wrap;
+  }
+
+  .s5x-disclaimer {
+    justify-self: stretch;
+    max-width: 100%;
+  }
+
+  .s10-content {
+    justify-content: flex-start;
+  }
+
+  .s10-content .slide-title {
+    margin-bottom: 24px;
+  }
+
+  .pipe-box,
+  .pipe-bottom,
+  .agent-burst {
+    max-width: 100%;
+  }
+
+  .pipe-box.navy-box,
+  .pipe-box.teal-box,
+  .pipe-bottom {
+    width: 100%;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .pipe-fan {
+    width: 100%;
+    padding: 0;
+  }
+
+  .arch-card {
+    flex: 0 0 auto;
+  }
+
+  .agent-burst {
+    width: 100%;
+    grid-template-columns: repeat(12, 1fr);
   }
 
   .s1-content {
