@@ -2855,6 +2855,123 @@ html, body {
 }
 
 /* =====================================================================
+   FULLSCREEN REBALANCING
+   ===================================================================== */
+@media (min-width: 900px) and (min-height: 820px) {
+  html:fullscreen #slide-5 .s5x-content,
+  html:-webkit-full-screen #slide-5 .s5x-content,
+  html:fullscreen #slide-6 .s4-content,
+  html:-webkit-full-screen #slide-6 .s4-content,
+  html:fullscreen #slide-7 .s6-content,
+  html:-webkit-full-screen #slide-7 .s6-content,
+  html:fullscreen #slide-8 .s7-content,
+  html:-webkit-full-screen #slide-8 .s7-content,
+  html:fullscreen #slide-9 .rq-content,
+  html:-webkit-full-screen #slide-9 .rq-content,
+  html:fullscreen #slide-10 .rq-content,
+  html:-webkit-full-screen #slide-10 .rq-content,
+  html:fullscreen #slide-11 .rq-content,
+  html:-webkit-full-screen #slide-11 .rq-content {
+    justify-content: center;
+    padding-top: clamp(66px, 7vh, 104px);
+    padding-bottom: clamp(104px, 10vh, 146px);
+  }
+
+  html:fullscreen #slide-5 .s5x-header,
+  html:-webkit-full-screen #slide-5 .s5x-header {
+    margin-bottom: clamp(20px, 2.5vh, 34px);
+  }
+
+  html:fullscreen #slide-5 .s5x-title,
+  html:-webkit-full-screen #slide-5 .s5x-title,
+  html:fullscreen #slide-8 .slide-title,
+  html:-webkit-full-screen #slide-8 .slide-title {
+    margin-bottom: clamp(24px, 3vh, 42px);
+  }
+
+  html:fullscreen #slide-5 .s5x-body,
+  html:-webkit-full-screen #slide-5 .s5x-body {
+    flex: 0 1 auto;
+    min-height: min(48vh, 520px);
+  }
+
+  html:fullscreen #slide-6 #flow-svg,
+  html:-webkit-full-screen #slide-6 #flow-svg {
+    flex: 0 1 auto;
+    height: min(52vh, 580px);
+    max-height: none;
+    margin: clamp(18px, 2.6vh, 36px) 0;
+  }
+
+  html:fullscreen #slide-7 .s6-spectrum-wrap,
+  html:-webkit-full-screen #slide-7 .s6-spectrum-wrap {
+    flex: 0 1 auto;
+    gap: clamp(34px, 4vh, 58px);
+  }
+
+  html:fullscreen #slide-7 .s6-cards,
+  html:-webkit-full-screen #slide-7 .s6-cards {
+    min-height: min(30vh, 320px);
+  }
+
+  html:fullscreen #slide-7 .s6-card,
+  html:-webkit-full-screen #slide-7 .s6-card {
+    padding: clamp(30px, 3vh, 42px) 28px;
+  }
+
+  html:fullscreen #slide-8 .s7-cols,
+  html:-webkit-full-screen #slide-8 .s7-cols {
+    flex: 0 1 auto;
+    min-height: min(55vh, 610px);
+    align-items: center;
+  }
+
+  html:fullscreen #slide-8 .s7-video-wrap,
+  html:-webkit-full-screen #slide-8 .s7-video-wrap {
+    max-height: min(46vh, 520px);
+  }
+
+  html:fullscreen #slide-8 .s7-steps,
+  html:-webkit-full-screen #slide-8 .s7-steps {
+    gap: clamp(20px, 2.4vh, 32px);
+  }
+
+  html:fullscreen #slide-8 .s7-step,
+  html:-webkit-full-screen #slide-8 .s7-step {
+    padding: clamp(20px, 2.4vh, 30px) 24px;
+  }
+
+  html:fullscreen #slide-9 .rq-main,
+  html:-webkit-full-screen #slide-9 .rq-main,
+  html:fullscreen #slide-10 .rq-main,
+  html:-webkit-full-screen #slide-10 .rq-main,
+  html:fullscreen #slide-11 .rq-main,
+  html:-webkit-full-screen #slide-11 .rq-main {
+    flex: 0 1 auto;
+    height: min(58vh, 620px);
+    max-height: none;
+  }
+
+  html:fullscreen #slide-9 .rq-title,
+  html:-webkit-full-screen #slide-9 .rq-title,
+  html:fullscreen #slide-10 .rq-title,
+  html:-webkit-full-screen #slide-10 .rq-title,
+  html:fullscreen #slide-11 .rq-title,
+  html:-webkit-full-screen #slide-11 .rq-title {
+    margin-bottom: 14px;
+  }
+
+  html:fullscreen #slide-9 .rq-question,
+  html:-webkit-full-screen #slide-9 .rq-question,
+  html:fullscreen #slide-10 .rq-question,
+  html:-webkit-full-screen #slide-10 .rq-question,
+  html:fullscreen #slide-11 .rq-question,
+  html:-webkit-full-screen #slide-11 .rq-question {
+    margin-bottom: clamp(18px, 2.2vh, 30px);
+  }
+}
+
+/* =====================================================================
    RESPONSIVE PRESENTATION LAYER
    ===================================================================== */
 @media (max-width: 1100px) {
