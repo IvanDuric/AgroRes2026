@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 st.set_page_config(
@@ -12,6 +13,10 @@ st.set_page_config(
 
 ROOT = Path(__file__).parent
 PRESENTATION_SOURCE = ROOT / "presentation_html"
+RAW_ASSET_BASE = (
+    "https://raw.githubusercontent.com/IvanDuric/AgroRes2026/main/"
+    "SecureFood_presentation_streamlit/presentation_html"
+)
 
 st.markdown(
     """
@@ -59,16 +64,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-cache_buster = int((PRESENTATION_SOURCE / "index.html").stat().st_mtime)
-st.markdown(
-    f"""
-    <iframe
-      class="presentation-frame"
-      src="/app/static/presentation_html/index.html?v={cache_buster}"
-      title="GROCERYsim ABM Presentation"
-      allow="fullscreen; autoplay"
-      allowfullscreen>
-    </iframe>
-    """,
-    unsafe_allow_html=True,
-)
+presentation_html = (PRESENTATION_SOURCE / "index.html").read_text(encoding="utf-8")
+for asset_dir in ("images", "videos", "scenario_results"):
+    presentation_html = presentation_html.replace(
+        f'src="{asset_dir}/',
+        f'src="{RAW_ASSET_BASE}/{asset_dir}/',
+    )
+    presentation_html = presentation_html.replace(
+        f"src='{asset_dir}/",
+        f"src='{RAW_ASSET_BASE}/{asset_dir}/",
+    )
+
+components.html(presentation_html, height=1200, scrolling=False)
