@@ -1,5 +1,4 @@
 from pathlib import Path
-import shutil
 
 import streamlit as st
 
@@ -13,16 +12,6 @@ st.set_page_config(
 
 ROOT = Path(__file__).parent
 PRESENTATION_SOURCE = ROOT / "presentation_html"
-STATIC_PRESENTATION = ROOT / "static" / "presentation_html"
-
-
-def sync_static_presentation() -> None:
-    """Mirror the presentation into Streamlit's static directory."""
-    STATIC_PRESENTATION.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(PRESENTATION_SOURCE, STATIC_PRESENTATION, dirs_exist_ok=True)
-
-
-sync_static_presentation()
 
 st.markdown(
     """
@@ -56,14 +45,30 @@ st.markdown(
         border: 0 !important;
         display: block !important;
       }
+      .presentation-frame {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        border: 0;
+        display: block;
+        background: #071b24;
+      }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 cache_buster = int((PRESENTATION_SOURCE / "index.html").stat().st_mtime)
-st.iframe(
-    f"/app/static/presentation_html/index.html?v={cache_buster}",
-    width="stretch",
-    height="stretch",
+st.markdown(
+    f"""
+    <iframe
+      class="presentation-frame"
+      src="/app/static/presentation_html/index.html?v={cache_buster}"
+      title="GROCERYsim ABM Presentation"
+      allow="fullscreen; autoplay"
+      allowfullscreen>
+    </iframe>
+    """,
+    unsafe_allow_html=True,
 )
