@@ -41,6 +41,16 @@ st.markdown(
         margin: 0 !important;
         padding: 0 !important;
       }
+      iframe {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        border: 0 !important;
+        display: block !important;
+        background: #071b24 !important;
+      }
       iframe[title="st.iframe"] {
         position: fixed !important;
         inset: 0 !important;
@@ -75,4 +85,4 @@ for asset_dir in ("images", "videos", "scenario_results"):
         f"src='{RAW_ASSET_BASE}/{asset_dir}/",
     )
 
-components.html(presentation_html, height=1200, scrolling=False)
+components.html(presentation_html, height=1000, scrolling=False)

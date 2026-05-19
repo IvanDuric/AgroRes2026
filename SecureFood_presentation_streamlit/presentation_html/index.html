@@ -34,6 +34,8 @@ html, body {
   overflow: hidden;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--navy-dark);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 *, *::before, *::after {
@@ -45,20 +47,29 @@ html, body {
    ===================================================================== */
 #presentation {
   position: fixed; inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
 }
 
 .slide {
   position: absolute;
-  width: 100vw; height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
   transform: translateX(100%);
   transition: transform var(--transition);
   will-change: transform;
+  -webkit-transform: translateX(100%);
+  -webkit-transition: -webkit-transform var(--transition);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-.slide.active  { transform: translateX(0); }
-.slide.prev    { transform: translateX(-100%); }
+.slide.active  { transform: translateX(0); -webkit-transform: translateX(0); }
+.slide.prev    { transform: translateX(-100%); -webkit-transform: translateX(-100%); }
 
 /* =====================================================================
    PROGRESS BAR
@@ -2580,6 +2591,8 @@ html, body {
 
 .s12-startover {
   position: absolute; bottom: 72px; right: 40px;
+  z-index: 1200;
+  pointer-events: auto;
 }
 
 /* =====================================================================
@@ -4158,7 +4171,7 @@ html, body {
         <!-- Left -->
         <div data-anim="scale-in" data-delay="200" class="s7-left">
           <div class="s7-video-wrap">
-            <video id="grocerysim-video" autoplay muted loop playsinline preload="auto">
+            <video id="grocerysim-video" autoplay muted loop playsinline webkit-playsinline preload="auto">
               <source src="videos/GROCERYsim-edited-web.mp4" type="video/mp4">
             </video>
           </div>
@@ -4739,7 +4752,7 @@ html, body {
     </div>
 
     <div class="s12-startover" data-anim="fade-in" data-delay="900">
-      <button class="outline-teal-btn" onclick="goToSlide(1)">↺ Start Over</button>
+      <button id="start-over-btn" class="outline-teal-btn" type="button">↺ Start Over</button>
     </div>
   </div>
 
@@ -4822,6 +4835,7 @@ function positionSlides(activeSlide) {
     if (!slide) continue;
     const offset = (i - activeSlide) * 100;
     slide.style.transform = 'translateX(' + offset + '%)';
+    slide.style.webkitTransform = 'translateX(' + offset + '%)';
     slide.classList.toggle('active', i === activeSlide);
     slide.classList.toggle('prev', i < activeSlide);
     if (i !== activeSlide) slide.classList.remove('entered');
@@ -4858,6 +4872,24 @@ function navigate(dir) {
 
 function reloadPresentation() {
   window.location.reload();
+}
+
+function startPresentationOver(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  goToSlide(1);
+}
+
+document.addEventListener('click', (event) => {
+  const target = event.target.closest ? event.target.closest('#start-over-btn') : null;
+  if (target) startPresentationOver(event);
+}, true);
+
+const startOverButton = document.getElementById('start-over-btn');
+if (startOverButton) {
+  startOverButton.addEventListener('click', startPresentationOver);
 }
 
 function getFullscreenElement() {
@@ -4900,6 +4932,12 @@ async function toggleFullscreen() {
 document.addEventListener('fullscreenchange', updateFullscreenButton);
 document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
 
+window.goToSlide = goToSlide;
+window.navigate = navigate;
+window.reloadPresentation = reloadPresentation;
+window.toggleFullscreen = toggleFullscreen;
+window.startPresentationOver = startPresentationOver;
+
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') navigate(1);
@@ -4919,12 +4957,43 @@ function onSlideEnter(n) {
   if (n === 12) triggerArchPipeline();
 }
 
+async function prepareSafariVideo(video) {
+  if (video.dataset.safariBlobReady === '1' || video.dataset.safariBlobLoading === '1') return;
+  const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(navigator.userAgent);
+  if (!isSafari) return;
+
+  const source = video.querySelector('source');
+  const videoUrl = source ? source.src : video.currentSrc || video.src;
+  if (!videoUrl) return;
+
+  video.dataset.safariBlobLoading = '1';
+  try {
+    const response = await fetch(videoUrl, { mode: 'cors', cache: 'force-cache' });
+    if (!response.ok) throw new Error('Video request failed: ' + response.status);
+    const blob = await response.blob();
+    const mp4Blob = blob.type === 'video/mp4' ? blob : new Blob([blob], { type: 'video/mp4' });
+    const objectUrl = URL.createObjectURL(mp4Blob);
+    video.src = objectUrl;
+    video.load();
+    video.dataset.safariBlobReady = '1';
+  } catch (err) {
+    console.warn('Safari video fallback failed; using original source.', err);
+  } finally {
+    video.dataset.safariBlobLoading = '0';
+  }
+}
+
 function handleSlideVideo(n) {
-  document.querySelectorAll('video').forEach(video => {
+  document.querySelectorAll('video').forEach(async video => {
     if (n === 8 && video.id === 'grocerysim-video') {
       video.muted = true;
       video.loop = true;
-      video.play().catch(() => {});
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      await prepareSafariVideo(video);
+      video.play().catch((err) => {
+        console.warn('Video autoplay was blocked or delayed.', err);
+      });
     } else {
       video.pause();
       video.currentTime = 0;
