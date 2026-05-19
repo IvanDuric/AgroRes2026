@@ -1,10 +1,7 @@
 from pathlib import Path
-import base64
-import mimetypes
-import re
+import shutil
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 
 st.set_page_config(
@@ -15,30 +12,17 @@ st.set_page_config(
 )
 
 ROOT = Path(__file__).parent
-HTML_PATH = ROOT / "presentation_html" / "index.html"
-ASSET_PATTERN = re.compile(r'(src=")(?!https?://|data:|#)([^"]+)(")')
+PRESENTATION_SOURCE = ROOT / "presentation_html"
+STATIC_PRESENTATION = ROOT / "static" / "presentation_html"
 
 
-def file_to_data_uri(path: Path) -> str:
-    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-    data = base64.b64encode(path.read_bytes()).decode("ascii")
-    return f"data:{mime};base64,{data}"
+def sync_static_presentation() -> None:
+    """Mirror the presentation into Streamlit's static directory."""
+    STATIC_PRESENTATION.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(PRESENTATION_SOURCE, STATIC_PRESENTATION, dirs_exist_ok=True)
 
 
-def inline_local_assets(html: str) -> str:
-    base = HTML_PATH.parent
-
-    def replace(match: re.Match[str]) -> str:
-        prefix, src, suffix = match.groups()
-        asset_path = (base / src).resolve()
-        if not asset_path.exists():
-            return match.group(0)
-        return f"{prefix}{file_to_data_uri(asset_path)}{suffix}"
-
-    return ASSET_PATTERN.sub(replace, html)
-
-
-html = inline_local_assets(HTML_PATH.read_text(encoding="utf-8"))
+sync_static_presentation()
 
 st.markdown(
     """
@@ -47,9 +31,18 @@ st.markdown(
         margin: 0 !important;
         padding: 0 !important;
         overflow: hidden !important;
+        background: #071b24 !important;
       }
-      .block-container { padding: 0 !important; max-width: none !important; }
-      header, footer, [data-testid="stToolbar"] { visibility: hidden; height: 0; }
+      .block-container {
+        padding: 0 !important;
+        max-width: none !important;
+        height: 100vh !important;
+      }
+      header, footer, [data-testid="stToolbar"],
+      [data-testid="stDecoration"], [data-testid="stStatusWidget"] {
+        visibility: hidden !important;
+        height: 0 !important;
+      }
       .stElementContainer, .element-container {
         margin: 0 !important;
         padding: 0 !important;
@@ -68,4 +61,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-components.html(html, height=1, scrolling=False)
+cache_buster = int((PRESENTATION_SOURCE / "index.html").stat().st_mtime)
+st.iframe(
+    f"/app/static/presentation_html/index.html?v={cache_buster}",
+    width="stretch",
+    height="stretch",
+)
